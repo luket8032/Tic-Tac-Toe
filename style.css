@@ -1,0 +1,18 @@
+h1 {
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 50px);
+    justify-content: center;
+}
+
+.cell {
+    border: solid black 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 50px;
+}

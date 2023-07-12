@@ -74,11 +74,14 @@ const gameBoard = (() => {
 
     const checkWin = () => {
         let checker = (arr, target) => target.every(v => arr.includes(v));
+        const winMsg = document.createElement('h3')
         for(const mark in cellsTaken) {
             winConditions.forEach((condition) => {
                 if(checker(cellsTaken[mark], condition)) {
-                    const winMsg = document.createElement('h3')
                     winMsg.textContent = `${mark} won!`
+                    container.append(winMsg)
+                } else if(board.includes('') === false) {
+                    winMsg.textContent = 'Looks like a tie!'
                     container.append(winMsg)
                 }
             })

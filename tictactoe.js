@@ -1,12 +1,11 @@
-const playersArr = []
-
 const player = (name, mark, turn) => {
     return {name, mark, turn}
 }
 
 const gameBoard = (() => {
     const container = document.querySelector('.container')
-    const board = ['', '', '','', '', '','', '', ''];
+    const boardArr = ['', '', '','', '', '','', '', ''];
+    const result = document.getElementById('result')
     let currentTurn = ''
 
     const cellsTaken = {
@@ -28,7 +27,7 @@ const gameBoard = (() => {
     const renderBoard = () => {
         const boardDoc = document.createElement('div')
         boardDoc.classList.add('board')
-        board.forEach((spot, index) => {
+        boardArr.forEach((spot, index) => {
             const spotDoc = document.createElement('div')
             spotDoc.classList.add('cell')
             spotDoc.setAttribute('data-cell', index)
@@ -55,7 +54,7 @@ const gameBoard = (() => {
     }
 
     const markCell = (markedCell) => {
-        board.splice(markedCell.dataset.cell, 1, currentTurn)
+        boardArr.splice(markedCell.dataset.cell, 1, currentTurn)
         markedCell.textContent = currentTurn
         markedCell.classList.add(currentTurn)
     }
@@ -70,39 +69,50 @@ const gameBoard = (() => {
         }
 
         playerArr.forEach((player) => {
-            cellsTaken[player.mark] = getInd(board, player.mark)
+            cellsTaken[player.mark] = getInd(boardArr, player.mark)
         })
     }
 
     const checkWin = () => {
         let checker = (arr, target) => target.every(v => arr.includes(v));
         const winMsg = document.getElementById('winMsg')
-        const result = document.getElementById('result')
         for(const mark in cellsTaken) {
             winConditions.forEach((condition) => {
                 if(checker(cellsTaken[mark], condition)) {
                     winMsg.textContent = `${mark} won!`
                     result.classList.add('active')
-                } else if(board.includes('') === false) {
+                } else if(boardArr.includes('') === false) {
                     winMsg.textContent = 'Looks like a tie!'
                     result.classList.add('active')
                 }
             })
         }
     }
+
+    const resetBoard = (currentBoard) => {
+        const cells = currentBoard.querySelectorAll('.cell')
+        container.removeChild(currentBoard)
+        boardArr.splice(
+            0, 9,
+            '', '', '',
+            '', '', '',
+            '', '', ''
+        )
+        renderBoard(boardArr)
+        result.classList.remove('active')
+    }
     
-    return {renderBoard, getTurn, markCell, getMarks, checkWin}
+    return {renderBoard, getTurn, markCell, getMarks, checkWin, resetBoard}
 })();
 
+const playersArr = []
 const player1 = player('Player 1', 'X', true);
 const player2 = player('Player 2', 'O', false);     
-
 playersArr.push(player1, player2) 
 
 gameBoard.renderBoard();
-const board = document.querySelector('.board')
-
-board.addEventListener('click', (e) => {
+let newBoard = document.querySelector('.board')
+newBoard.addEventListener('click', (e) => {
     if(e.target.className === 'cell' && e.target.textContent === '') {
         gameBoard.getTurn(playersArr)
         gameBoard.markCell(e.target)
@@ -110,3 +120,24 @@ board.addEventListener('click', (e) => {
         gameBoard.checkWin()
     }
 })
+
+const restart = document.querySelector('.restart')
+restart.addEventListener('click', () => {
+    gameBoard.resetBoard(newBoard)
+    newBoard = document.querySelector('.board')
+    gameBoard.getTurn(playersArr)
+    newBoard.addEventListener('click', (e) => {
+        if(e.target.className === 'cell' && e.target.textContent === '') {
+            gameBoard.getTurn(playersArr)
+            gameBoard.markCell(e.target)
+            gameBoard.getMarks(playersArr)
+            gameBoard.checkWin()
+        }
+    })
+    
+})
+
+
+
+
+

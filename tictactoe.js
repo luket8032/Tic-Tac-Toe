@@ -21,7 +21,8 @@ const gameBoard = (() => {
         [0, 3, 6],
         [1, 4, 7],
         [2, 5, 8],
-        [0, 4, 8]
+        [0, 4, 8],
+        [2, 4, 6]
     ]
 
     const renderBoard = () => {
@@ -56,6 +57,7 @@ const gameBoard = (() => {
     const markCell = (markedCell) => {
         board.splice(markedCell.dataset.cell, 1, currentTurn)
         markedCell.textContent = currentTurn
+        markedCell.classList.add(currentTurn)
     }
 
     const getMarks = (playerArr) => {
@@ -74,15 +76,16 @@ const gameBoard = (() => {
 
     const checkWin = () => {
         let checker = (arr, target) => target.every(v => arr.includes(v));
-        const winMsg = document.createElement('h3')
+        const winMsg = document.getElementById('winMsg')
+        const result = document.getElementById('result')
         for(const mark in cellsTaken) {
             winConditions.forEach((condition) => {
                 if(checker(cellsTaken[mark], condition)) {
                     winMsg.textContent = `${mark} won!`
-                    container.append(winMsg)
+                    result.classList.add('active')
                 } else if(board.includes('') === false) {
                     winMsg.textContent = 'Looks like a tie!'
-                    container.append(winMsg)
+                    result.classList.add('active')
                 }
             })
         }

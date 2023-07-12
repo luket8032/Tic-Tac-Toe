@@ -1,5 +1,21 @@
+const playersArr = []
+
+const player = (name, mark, turn) => {
+    return {name, mark, turn}
+}
+
 const gameBoard = (() => {
-    const board = ['O', 'O', 'X','X', 'O', 'O','X', 'X', 'X'];
+    const board = ['', '', '','', '', '','', '', ''];
+    let currentTurn = ''
+    const winConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8]
+    ]
 
     const renderBoard = (boardArr) => {
         const boardDoc = document.createElement('div')
@@ -13,15 +29,36 @@ const gameBoard = (() => {
         })
         document.body.append(boardDoc)
     }
-    return {board, renderBoard}
+
+    const changeTurn = (playerArr) => {
+        playerArr.forEach((player) => {
+            player.turn = !player.turn
+        })
+    }
+
+    const getTurn = (playerArr) => {
+        playerArr.forEach((player) => {
+            if(player.turn === true) {
+                currentTurn = player.mark
+            }
+        })
+        return(currentTurn)
+    }
+    
+    return {board, renderBoard, changeTurn, getTurn}
 })();
 
-const player = (name, mark) => {
-    return {name, mark}
-}
+const player1 = player('Player 1', 'X', true);
+const player2 = player('Player 2', 'O', false);
 
-const player1 = player('Player 1', 'X');
-const player2 = player('Player 2', 'O');
+playersArr.push(player1, player2) 
 
-console.log(gameBoard.board)
 gameBoard.renderBoard(gameBoard.board);
+const board = document.querySelector('.board')
+
+board.addEventListener('click', (e) => {
+    e.target.textContent = gameBoard.getTurn(playersArr)
+    gameBoard.changeTurn(playersArr)
+    
+})
+
